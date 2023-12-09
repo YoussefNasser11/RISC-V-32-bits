@@ -1,0 +1,83 @@
+addi x0,  x0, 0      # no operation while reset cycle 
+addi x1,  x0, 3      # x1-->   3 i,Type -- add 3 on x0 --> 3+0 so x1 =3 
+addi x2,  x1, 9      # x2 -->  12
+addi x3,  x2,1000    # x3 -->  1012
+add  x4,  x3,x1      # x4 -->  1003
+sub  x5,  x3,x2      # x5 -->  1000
+sub  x6,  x2,x3      # x6 --> -1000  12-1012 == -1000
+and  x7,  x5,x0      # x7 --> 0 X & 0 => 0
+andi x8,  x5,100     # x8 --> 96
+sw   x8, 1023(x0)    # Ram Adds #255 = 96
+or   x9,  x2,x1      # x9 --> 15
+ori  x10, x9,0       # x10 --> 15
+sw   x3, 12(x1)      # Ram Adds #3 = 1012
+lw   x11,1023(x0)    # x11 --> 96
+beq  x8, x11 ,start  # go to start
+sw   x4, -12(x9)       # should be skipped , check adds 0 @ ram , it should be x -------------skipped-----------------
+start: sw x6 , 32(x0)    # Ram Adds #8 = -1000
+beq  x8, x9 ,EOT  # go to start
+add x31, x2,x10  # x31 = 27 
+EOT: sw x5, 64(x0)       #  check adds 16 @ ram , it should be 1000 bec x8 and x9 not euqal so it continoue 
+sw x31 , 128(x0)         # Adds 32 @ ram = 27
+bne x8,x9 , NOTEQU # X8 AND X9 ARE NOT EQUAL 
+addi x16,  x5,1     # x16 --> 1001 wrong solution 
+NOTEQU : addi x16 , x5 ,2 # x16 --> 1002 right solution 
+bne x9,x10 ,Equal # they are equal so it should not go to Equal directly 
+sw x11 , 36(x0)         # Adds 9 @ ram = 96 , should be excuted 
+Equal : addi x27 , x31 , 2  # x27 == 29 
+jal x21 , jal_test
+sw  x21 , 40(x0)             # Adds 10 @ ram = PC number , skipped  -------------skipped-----------------
+jal_test : sw  x21 , 44(x0)  # Adds 11 @ ram = PC number , real pc number should be shown which is 112 /4 = 28 so 28 instructions are done out of 30 lines because 2 lines are skipped 16 and 19
+jalr x22, x0,128             # 128+x0 == line (31 - 1) * 4 === 124 @x22
+sw   x10 , 60(x0)             # Adds 15 @ ram = x ,  Escaped 
+sw   x10 , 64(x0)             # Adds 16 @ ram 15
+
+
+
+
+
+
+00000013
+00300093
+00908113
+3E810193
+00118233
+402182B3
+40310333
+0002F3B3
+0642F413
+3E802FA3
+001164B3
+0004E513
+0030A623
+3FF02583
+00B40463
+FE44AA23
+02602023
+00940463
+00A10FB3
+04502023
+09F02023
+00941463
+00128813
+00228813
+00A49463
+02B02223
+002F8D93
+00800AEF
+03502423
+03502623
+08000B67
+02A02E23
+04A02023
+
+
+
+
+
+
+
+
+
+
+
